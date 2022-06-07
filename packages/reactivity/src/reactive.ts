@@ -185,6 +185,7 @@ function createReactiveObject(
   collectionHandlers: ProxyHandler<any>,
   proxyMap: WeakMap<Target, any>
 ) {
+  // 不是对象 直接返回
   if (!isObject(target)) {
     if (__DEV__) {
       console.warn(`value cannot be made reactive: ${String(target)}`)
@@ -193,6 +194,7 @@ function createReactiveObject(
   }
   // target is already a Proxy, return it.
   // exception: calling readonly() on a reactive object
+  // 如果使用 readonly || shallowReadonly 调用已经响应式的对象 直接返回
   if (
     target[ReactiveFlags.RAW] &&
     !(isReadonly && target[ReactiveFlags.IS_REACTIVE])
@@ -200,10 +202,12 @@ function createReactiveObject(
     return target
   }
   // target already has corresponding Proxy
+  // 已经代理过 直接返回代理结果
   const existingProxy = proxyMap.get(target)
   if (existingProxy) {
     return existingProxy
   }
+  // 获取 target 的类型
   // only specific value types can be observed.
   const targetType = getTargetType(target)
   if (targetType === TargetType.INVALID) {
@@ -235,7 +239,11 @@ export function isShallow(value: unknown): boolean {
 export function isProxy(value: unknown): boolean {
   return isReactive(value) || isReadonly(value)
 }
-
+/**
+ * @Author: wyb
+ * @Descripttion: 获取原始数据
+ * @param {T} observed
+ */
 export function toRaw<T>(observed: T): T {
   const raw = observed && (observed as Target)[ReactiveFlags.RAW]
   return raw ? toRaw(raw) : observed

@@ -1,0 +1,30 @@
+## reactivity
+
+- reactive
+  - 分类
+    - reactive
+      - createReactiveObject(target, false, mutableHandlers, mutableCollectionHandlers, reactiveMap)
+    - shallowReactive
+      - createReactiveObject(target, false, shallowReactiveHandlers, shallowCollectionHandlers, shallowReactiveMap)
+    - readonly
+      - createReactiveObject(target, true, readonlyHandlers, readonlyCollectionHandlers, readonlyMap)
+    - shallowReadonly
+      - createReactiveObject(target, true, shallowReadonlyHandlers, shallowReadonlyCollectionHandlers, shallowReadonlyMap)
+  - createReactiveObject
+    - target
+    - isReadonly
+    - baseHandlers
+      - mutableHandlers
+        - get => createGetter(false, false)
+          - 如果是数组 重写数组方法
+            - 'includes' 'indexOf' 'lastIndexOf' 对数组的所有的属性都做一遍依赖收集
+            - 'push' 'pop' 'shift' 'unshift' 'splice'
+    - collectionHandlers
+    - proxyMap
+  - new Proxy(target, 集合 ? collectionHandlers : baseHandlers)
+  - createGetter(isReadonly, shallow)
+  - 说明
+    - 如果 target 不是对象直接返回
+    - 如果使用 readonly || shallowReadonly 调用已经响应式的对象 直接返回
+    - 经代理过 直接返回代理结果
+    - 如果代理的是 Map Set WeakMap WeakSet
